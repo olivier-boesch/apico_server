@@ -35,7 +35,7 @@ void loop() {
   long reading = mass_sensor.read_average(TIMES);
   Serial.print("Offset: ");
   Serial.print(offset);
-  Serial.print("\tRaw Mass (w/o off): ");
+  Serial.print("\tRaw Mass (w/o offset): ");
   Serial.print(reading);
   Serial.print("\tScaled Mass: ");
   Serial.print((reading - offset) / SCALE);
