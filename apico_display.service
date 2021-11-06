@@ -1,0 +1,20 @@
+[Unit]
+Description=Apico Display Server
+After=network-online.target
+
+[Service]
+Type=simple
+
+ExecStart=/home/pi/apico/apico_display.sh
+
+User=pi
+Group=pi
+UMask=007
+
+Restart=on-failure
+
+# Configures the time to wait before service is stopped forcefully.
+TimeoutStopSec=300
+
+[Install]
+WantedBy=multi-user.target
