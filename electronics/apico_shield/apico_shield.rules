@@ -11,7 +11,7 @@
     (via_costs 50)
     (plane_via_costs 5)
     (start_ripup_costs 100)
-    (start_pass_no 160)
+    (start_pass_no 284)
     (layer_rule F.Cu
       (active on)
       (preferred_direction horizontal)
@@ -64,7 +64,7 @@
   )
   (class "kicad_default"
     "Net-(APICO_UNO1-PadGND1)" "Net-(APICO_UNO1-PadD6)" "Net-(APICO_UNO1-PadD5)" "Net-(APICO_UNO1-Pad5V1)" "Net-(APICO_UNO1-PadD11)" "Net-(APICO_UNO1-PadD12)" "Net-(APICO_UNO1-PadD13)" "Net-(APICO_UNO1-PadD4)"
-    "Net-(APICO_UNO1-PadD3)" "Net-(APICO_UNO1-PadD2)" "Net-(APICO_UNO1-PadA5)" "Net-(APICO_UNO1-PadA4)" "Net-(APICO_UNO1-PadD9)" "Net-(APICO_UNO1-PadD8)" "Net-(APICO_UNO1-PadD7)"
+    "Net-(APICO_UNO1-PadD3)" "Net-(APICO_UNO1-PadD2)" "Net-(APICO_UNO1-PadA5)" "Net-(APICO_UNO1-PadA4)" "Net-(APICO_UNO1-PadD9)" "Net-(APICO_UNO1-PadD8)" "Net-(APICO_UNO1-PadD7)" "Net-(C2-Pad1)"
     (clearance_class "kicad_default")
     (via_rule kicad_default)
     (rule

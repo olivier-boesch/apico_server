@@ -69,7 +69,7 @@ Connection ~ 7900 3400
 Wire Wire Line
 	7900 3700 7900 5150
 Wire Wire Line
-	7900 5150 3850 5150
+	7900 5150 3900 5150
 Connection ~ 7900 3700
 Wire Wire Line
 	7900 3000 7800 3000
@@ -141,9 +141,6 @@ Wire Wire Line
 Connection ~ 3950 4200
 Wire Wire Line
 	3400 3150 3850 3150
-Wire Wire Line
-	3850 3150 3850 4200
-Connection ~ 3850 4600
 $Comp
 L Connector:Conn_01x05_Male C2
 U 1 1 6179F92A
@@ -167,10 +164,7 @@ F 3 "~" H 3250 5050 50  0001 C CNN
 	1    0    0    -1  
 $EndComp
 Wire Wire Line
-	3450 4200 3850 4200
-Connection ~ 3850 4200
-Wire Wire Line
-	3850 4200 3850 4600
+	3450 4200 3700 4200
 Wire Wire Line
 	3450 4300 3950 4300
 Connection ~ 3950 4300
@@ -221,14 +215,38 @@ Wire Wire Line
 Wire Wire Line
 	4150 3300 4450 3300
 Wire Wire Line
-	3850 4600 3850 5150
-Wire Wire Line
 	3450 5050 3950 5050
 Connection ~ 3950 5050
 Wire Wire Line
 	3450 5150 3700 5150
 Wire Wire Line
-	3700 5150 3700 4600
+	3700 4200 3700 5150
 Wire Wire Line
-	3700 4600 3850 4600
+	3850 3150 3850 4600
+Wire Wire Line
+	3850 4600 3850 5150
+Connection ~ 3850 4600
+$Comp
+L Connector:Conn_01x02_Male J1
+U 1 1 6187056D
+P 3800 5750
+F 0 "J1" V 3954 5562 50  0000 R CNN
+F 1 "Power out" V 3863 5562 50  0000 R CNN
+F 2 "Connector_PinHeader_2.54mm:PinHeader_1x02_P2.54mm_Vertical" H 3800 5750 50  0001 C CNN
+F 3 "~" H 3800 5750 50  0001 C CNN
+	1    3800 5750
+	0    -1   -1   0   
+$EndComp
+Wire Wire Line
+	3800 5550 3800 5300
+Wire Wire Line
+	3800 5300 3700 5300
+Wire Wire Line
+	3700 5300 3700 5150
+Connection ~ 3700 5150
+Wire Wire Line
+	3900 5550 3900 5150
+Connection ~ 3900 5150
+Wire Wire Line
+	3900 5150 3850 5150
 $EndSCHEMATC
