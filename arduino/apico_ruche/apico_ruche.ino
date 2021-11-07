@@ -27,6 +27,7 @@
 
 #define TIMER_TRANSMIT 10000  //ms - should send every hour (3600000 ms) in production and 10s (10000ms) for tests
 SimpleTimer message_timer(TIMER_TRANSMIT);
+//timer to print bees io stats
 #ifdef DEBUG
   SimpleTimer print_bee_timer(1000);
 #endif
@@ -83,25 +84,28 @@ float co2 = 0.0;
 float temperature = 0.0;
 float humidity = 0.0;
 
-//Client client address programmed in eeprom
+//Get Client client address programmed in eeprom
 uint8_t get_client_address() {
   uint8_t client_address;
   EEPROM.get(CLIENT_ADDRESS_POS, client_address);
   return client_address;
 }
 
+//Get Mass offset programmed in eeprom
 long get_mass_offset() {
   long mass_offset;
   EEPROM.get(MASS_OFFSET_POS, mass_offset);
   return mass_offset;
 }
 
+//Get Mass scale programmed in eeprom
 float get_mass_scale() {
   float mass_scale;
   EEPROM.get(MASS_SCALE_POS, mass_scale);
   return mass_scale;
 }
 
+//Get Mass amp gain programmed in eeprom
 uint8_t get_mass_gain() {
   uint8_t mass_gain;
   EEPROM.get(MASS_GAIN_POS, mass_gain);
@@ -205,33 +209,39 @@ void setup_mass() {
 
 //Environement (co2, t, rh) sensor setup
 void setup_env() {
-#ifdef DEBUG
-  Serial.println("-- Environement Sensor Setup");
-#endif
+  #ifdef DEBUG
+    Serial.println("-- Environement Sensor Setup");
+  #endif
+  //start Wire (I2C) lib
   Wire.begin();
-#ifdef DEBUG
-  Serial.print("Waiting the sensor to become ready...");
-#endif
+  #ifdef DEBUG
+    Serial.print("Waiting the sensor to become ready...");
+  #endif
+  //Init Sensor lib
   if (!env_sensor.begin()) {
-#ifdef DEBUG
-    Serial.println("Air sensor not detected. Please check wiring. Freezing...");
-#endif
+    #ifdef DEBUG
+      Serial.println("Air sensor not detected. Please check wiring. Freezing...");
+    #endif
     while (true)
       ;
   }
-#ifdef DEBUG
-  Serial.println("done.");
-  Serial.println("-- Environement Sensor Setup Finished.");
-#endif
+  #ifdef DEBUG
+    Serial.println("done.");
+    Serial.println("-- Environement Sensor Setup Finished.");
+  #endif
 }
 
 //beesio setup
 void setup_beesio() {
-  //done by the lib
-  //bees_data = (uint8_t *) malloc(BEESIO_REGISTER_COUNT * sizeof(uint8_t));
-  //memset(bees_data, 0, BEESIO_REGISTER_COUNT * sizeof(uint8_t));
+  #ifdef DEBUG
+    Serial.println("-- Bees IO Setup");
+  #endif
+  //init tables to 0
   memset(bees_data_trig, 0, BEESIO_REGISTER_COUNT * sizeof(uint8_t));
   memset(bees_inside, 0, BEESIO_REGISTER_COUNT / 2 * sizeof(uint8_t));
+  #ifdef DEBUG
+    Serial.println("-- Bees IO Setup Finished.");
+  #endif
 }
 
 //get the right bit in the table
@@ -244,13 +254,12 @@ void set_bee_bit_at(uint8_t idx, uint8_t* t, uint8_t state) {
   t[idx / 8] = (t[idx / 8] & ~((uint8_t)1 << (idx % 8))) | (state << (idx % 8));
 }
 
-
 //update beesio counters from states
 void update_beesio() {
   uint8_t s1, s2;
   uint8_t s1_trig = 0, s2_trig = 0;
   uint8_t inside = 0;
-  //get data
+  //get data for sensor
   beesio_sensor.getAll(bees_data);
   //for each bit in a half table (one half for front, the other for rear)
   for (uint8_t i = 0; i < BEESIO_REGISTER_COUNT * 8 / 2; i++) {
@@ -260,27 +269,33 @@ void update_beesio() {
     s1_trig = get_bee_bit_at(i, bees_data_trig);
     s2_trig = get_bee_bit_at(i + BEESIO_REGISTER_COUNT * 8 / 2, bees_data_trig);
     inside = get_bee_bit_at(i, bees_inside);
+    //nobody inside and out barrier crossed
     if (!s1 && !inside && s1_trig) {
       inside = 0;
       s1_trig = 0;
     }
+    //someone inside and in barrier crossed => somebody has entered
     if (!s2 && inside && s2_trig) {
       inside = 0;
       bees_in++;
       s2_trig = 0;
     }
+    //nobody inside and in barrier crossed
     if (!s2 && !inside && s2_trig) {
       inside = 1;
       s2_trig = 0;
     }
+    //somebody inside and out barrier crossed => somebody left
     if (!s1 && inside && s1_trig) {
       inside = 0;
       bees_out++;
       s1_trig = 0;
     }
+    //in barrier begin crossing
     if (s1) {
       s1_trig = 1;
     }
+    //out barrier begin crossing
     if (s2) {
       s2_trig = 1;
     }
@@ -307,32 +322,39 @@ void reset_beesio() {
 }
 
 void send_message() {
+  //------ get sensor data
+  //mass
   mass = mass_sensor.get_units(2);
-  //while(!env_sensor.dataAvailable());
+  //environnement
   co2 = env_sensor.getCO2();
   temperature = env_sensor.getTemperature();
   humidity = env_sensor.getHumidity();
+  //format payload as json string
   sprintf(buf, "{\"M\":%d,\"T\":%d,\"H\":%d,\"C\":%d,\"I\":%d,\"O\":%d}", (unsigned int) mass * 100, (unsigned int) temperature * 10, (unsigned int) humidity * 10, (unsigned int) co2, bees_in, bees_out);
-#ifdef DEBUG
-  Serial.print("send message...");
-#endif
-
-//send message over LORA
-#ifdef DEBUG
-  Serial.print(buf);
-#endif
+  //send message over LORA
+  #ifdef DEBUG
+    Serial.print("send message...");
+  #endif
+  #ifdef DEBUG
+    Serial.print(buf);
+  #endif
   if (!radio->sendtoWait((uint8_t*)&buf, strlen(buf), SERVER_ADDRESS)) {
-#ifdef DEBUG
-    Serial.println("...nack");
-#endif
-  } else {
-#ifdef DEBUG
-    Serial.println("...ack");
-#endif
+    //message was not recieved
+    #ifdef DEBUG
+      Serial.println("...nack");
+    #endif
+  }
+  else {
+    //message received
+    #ifdef DEBUG
+      Serial.println("...ack");
+    #endif
+    //reset counters
     reset_beesio();
   }
 }
 
+//-------------------- SETUP of BOARD
 void setup() {
 #ifdef DEBUG
   Serial.begin(115200);
@@ -346,13 +368,19 @@ void setup() {
   setup_mass();
   setup_env();
   setup_beesio();
+  delay(100); //wait 100ms at the end of the setup for stabilisation
 }
 
-
+//------------------- MAIN LOOP
 void loop() {
+  //count bees
   update_beesio();
+  //send message (at the right time)
   if (message_timer.isReady()) {
     send_message();
+    //reset timer for next send
     message_timer.reset();
   }
 }
+
+//------------------------ END
