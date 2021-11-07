@@ -13,7 +13,7 @@ class ShiftRegister4021BP {
 
 public:
   ShiftRegister4021BP(int numberOfRegisters, int dataPin, int clockPin, int latchPin);
-  void getAll(uint8_t* buf);
+  void getAll(uint8_t * buf);
   uint8_t get(int pin);
 
 private:

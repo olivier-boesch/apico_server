@@ -28,7 +28,7 @@ ShiftRegister4021BP::ShiftRegister4021BP(int numberOfRegisters, int dataPin, int
 }
 
 //reads shift register pins and writes to registerValues, an uint8_t array equal to the number of shift registers
-void ShiftRegister4021BP::getAll(uint8_t* buf) {
+void ShiftRegister4021BP::getAll(uint8_t * buf) {
   digitalWrite(_latchPin, HIGH);
   delayMicroseconds(20);
   digitalWrite(_latchPin, LOW);
