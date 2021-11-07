@@ -54,5 +54,3 @@ class Radio:
         except (UnicodeError, json.JSONDecodeError) as e:
             self.logger.error(f"Error while decoding packet: {e}")
             return None
-
-

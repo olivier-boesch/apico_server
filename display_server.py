@@ -13,19 +13,25 @@ import threading
 import time
 from display import DisplayHardware
 import logging
-from settings import *
+import logging.handlers
 
 stop_threads = False
 
-# logging
-LOG_LEVEL = logging.DEBUG
+LOG_LEVEL = logging.INFO
 logger = logging.getLogger(name="display_server")
 logger.setLevel(LOG_LEVEL)
+
+# logging
 ch = logging.StreamHandler()
+fh = logging.handlers.TimedRotatingFileHandler(filename="/var/log/apico/apico_display.log", when="D", interval=1, backupCount=7)
 ch.setLevel(logging.DEBUG)
 logger.addHandler(ch)
-formatter = logging.Formatter('%(levelname)s - %(asctime)s - %(name)s - %(message)s')
+logger.addHandler(fh)
+formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 ch.setFormatter(formatter)
+fh.setFormatter(formatter)
+
+from settings import *
 
 message_queue = queue.Queue()
 

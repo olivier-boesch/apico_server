@@ -61,7 +61,7 @@ class DisplayHardware:
         time.sleep(timeout)
         self.clean()
 
-    def get_ping(self, time_limit=300):
+    def get_ping(self, time_limit=1200):
         s = "Ping (alive stations):\n"
         s += '  |'.join([str(i+1)  for i in range(HIVES_NUMBER)]) + '\n'
         for i in range(HIVES_NUMBER):

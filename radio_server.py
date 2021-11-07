@@ -7,6 +7,7 @@ Code: Olivier Boesch (c) 2021
 """
 import json
 import logging
+import logging.handlers
 import socket
 import signal
 import radio
@@ -15,15 +16,19 @@ import queue
 import pymysql
 from settings import *
 
-# logging
-LOG_LEVEL = logging.DEBUG
+LOG_LEVEL = logging.INFO
 logger = logging.getLogger(name="radio_server")
 logger.setLevel(LOG_LEVEL)
+
+# logging
 ch = logging.StreamHandler()
+fh = logging.handlers.TimedRotatingFileHandler(filename="/var/log/apico/apico_radio.log", when="D", interval=1, backupCount=7)
 ch.setLevel(logging.DEBUG)
 logger.addHandler(ch)
+logger.addHandler(fh)
 formatter = logging.Formatter('%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 ch.setFormatter(formatter)
+fh.setFormatter(formatter)
 
 # rfm9x radio
 radio = radio.Radio()
@@ -70,7 +75,7 @@ def radio_message_process(stop, messages_queue):
 def message_to_db(stop, messages_queue):
     while not stop():
         try:
-            message = messages_queue.get(timeout=0.5)
+            message = messages_queue.get(timeout=0.1)
             logger.info(f"Passing Data to Db: {message}")
             log_display = display_message(message)
             display_socket.sendto(log_display, DISPLAT_ADDRESS)
