@@ -44,7 +44,7 @@ d_hole_screw = 3.3;
 d_hole_fix = hole_diameter(3);
 
 //clearance in box for panels
-panel_clearance = 0.2;
+panel_clearance = 0.3;
 
 //panel material
 panel_ep = 1.5;
@@ -59,7 +59,7 @@ draw_left = true;
 draw_right = true;
 
 //exploded view
-exploded_view = true; //false: normal preview; true: exploded view
+exploded_view = false; //false: normal preview; true: exploded view
 
 //colors (only for preview)
 up_down_color = "GhostWhite";
@@ -74,10 +74,6 @@ if($preview){
 		translate([25,0,18]) cube([30,25,1.6],center=true); //radio
 		translate([-17,35,18]) cube([23.5,31,1.6],center=true); //mass amp
 	}
-	/*screw_hole(x=-38, y=25, d_hole=d_int_insert, d_ext=d_ext_insert, h=h_insert);
-	screw_hole(x=13, y=9.5, d_hole=d_int_insert, d_ext=d_ext_insert, h=h_insert);
-	screw_hole(x=13, y=-18, d_hole=d_int_insert, d_ext=d_ext_insert, h=h_insert);
-	screw_hole(x=-39, y=-23.5, d_hole=d_int_insert, d_ext=d_ext_insert, h=h_insert);*/
 	translate([-34, 25, -Height/2+ep/2]) threadedInsert(size=3, show_clearance=true, from_top=false);
 	translate([17, 9.75, -Height/2+ep/2]) threadedInsert(size=3, show_clearance=true, from_top=false);
 	translate([17, -18.25, -Height/2+ep/2]) threadedInsert(size=3, show_clearance=true, from_top=false);
@@ -104,7 +100,7 @@ module top_holes(){
 	rotate([0,0,90]) text_on(x=0, y=30, s="µC",font="Audiowide:style=Regular", size=14);
 	rotate([0,0,90]) text_on(x=0, y=0, size=9, s="Électronique",font="Audiowide:style=Regular");
 	rotate([0,0,90]) text_on(x=0, y=-30, size=9, s="Radio",font="Audiowide:style=Regular");
-	place_object(25,-45) linear_extrude(5) import("logo.svg", convexity=30);
+	place_object(25,-45) linear_extrude(2) import("logo_lora.svg", convexity=30);
 }
 
 //bottom of box
@@ -239,7 +235,7 @@ module lock(hole=false){
 
 //panel
 module panel(){
-	scaled_box(panel_ep, -2*ep-panel_clearance);
+	scaled_box(panel_ep, -2*ep-2*panel_clearance);
 }
 
 //halfbox (complete)
@@ -258,7 +254,7 @@ module halfbox(){
 		//ends for panel
 		for(i=[-1,1]) translate([i*(Length-panel_ep-2*panel_clearance-2*ep)/2,0,0]){
 			scaled_box(panel_ep+2*panel_clearance+2*ep+2*eps,-6*ep);
-			scaled_box(panel_ep+2*panel_clearance,-2*ep-2*panel_clearance);
+			scaled_box(panel_ep+2*panel_clearance,-2*ep+panel_clearance);
 		}
 		for(i=[-1,1]){
 			translate([i*Length/4,-Width/2+ep,0]){
@@ -306,7 +302,9 @@ module right(){
 	}
 }
 
-if($preview && !exploded_view){
+//$preview = false;
+
+if($preview && !exploded_view) /*intersection()*/{
 	//bottom
 	if(draw_bottom) color(up_down_color) bottom();
 	//top
@@ -316,6 +314,7 @@ if($preview && !exploded_view){
 	//left
 	if(draw_left) color(left_right_color) translate([-(Length-panel_ep)/2+ep+panel_clearance,0,0]) left();
 }
+
 if($preview && exploded_view){
 	//bottom
 	if(draw_bottom) color(up_down_color) translate([0,0,-Height/2]) bottom();
@@ -326,6 +325,7 @@ if($preview && exploded_view){
 	//left
 	if(draw_left) color(left_right_color) translate([-(Length-panel_ep)/2+ep+panel_clearance,0,0]) left();
 }
+
 if(!$preview){
 	//bottom
 	bottom();

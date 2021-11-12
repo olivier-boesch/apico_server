@@ -52,7 +52,7 @@ draw_left = true;
 draw_right = true;
 
 //exploded view
-exploded_view = false; //false: normal preview; true: exploded view
+exploded_view = true; //false: normal preview; true: exploded view
 
 //colors (only for preview)
 up_down_color = "GhostWhite";
@@ -212,7 +212,7 @@ module halfbox(){
 		//ends for panel
 		for(i=[-1,1]) translate([i*(Length-panel_ep-2*panel_clearance-2*ep)/2,0,0]){
 			scaled_box(panel_ep+2*panel_clearance+2*ep+2*eps,-6*ep);
-			scaled_box(panel_ep+2*panel_clearance,-2*ep-2*panel_clearance);
+			scaled_box(panel_ep+2*panel_clearance,-2*ep+panel_clearance);
 		}
 		for(i=[-1,1]){
 			translate([i*Length/4,-Width/2+ep,0]){
