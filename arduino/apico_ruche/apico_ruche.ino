@@ -23,7 +23,7 @@
 #include "SR4021.h"
 
 //comment this if you don't want debug over serial
-#define DEBUG
+//#define DEBUG
 
 #define TIMER_TRANSMIT 10000  //ms - should send every hour (3600000 ms) in production and 10s (10000ms) for tests
 SimpleTimer message_timer(TIMER_TRANSMIT);
@@ -271,7 +271,7 @@ void update_beesio() {
     inside = get_bee_bit_at(i, bees_inside);
     //nobody inside and out barrier crossed
     if (!s1 && !inside && s1_trig) {
-      inside = 0;
+      inside = 1;
       s1_trig = 0;
     }
     //someone inside and in barrier crossed => somebody has entered
