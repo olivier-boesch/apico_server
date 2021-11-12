@@ -76,7 +76,7 @@ def message_to_db(stop, messages_queue):
     while not stop():
         try:
             message = messages_queue.get(timeout=0.1)
-            logger.info(f"Passing Data to Db: {message}")
+            logger.debug(f"Passing Data to Db: {message}")
             log_display = display_message(message)
             display_socket.sendto(log_display, DISPLAT_ADDRESS)
             db_save(message)

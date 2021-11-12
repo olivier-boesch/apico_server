@@ -28,10 +28,10 @@ class Radio:
             exit(1)
 
     def wait_for_receive(self):
-        self.logger.info("Waiting to receive packet")
-        self.data = self.rfm9x.receive(keep_listening=True, with_ack=True, with_header=True)
+        self.logger.debug("Waiting to receive packet")
+        self.data = self.rfm9x.receive(keep_listening=True, with_ack=True, with_header=True, timeout=2)
         if self.data is not None:
-            self.logger.debug(f"Data Packet Received: {self.data!r}")
+            self.logger.info(f"Data Packet Received: {self.data!r}")
             self.rssi = self.rfm9x.rssi
 
     def process_packet(self):
@@ -40,7 +40,7 @@ class Radio:
         try:
             node_from = self.data[1]
             payload = self.data[4:].decode()
-            self.logger.info(f"Data from {node_from}")
+            self.logger.info(f"Data from node {node_from}")
             self.logger.debug(f"Received RSSI: {self.rssi}")
             self.logger.debug(f"Data Packet payload: {payload}")
             node_data = json.loads(payload)
@@ -52,5 +52,5 @@ class Radio:
             node_data['rssi'] = self.rssi
             return node_data
         except (UnicodeError, json.JSONDecodeError) as e:
-            self.logger.error(f"Error while decoding packet: {e}")
+            self.logger.error(f"Error while decoding packet: {str(type(e))} -> {e}")
             return None
